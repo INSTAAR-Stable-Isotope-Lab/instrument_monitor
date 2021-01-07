@@ -15,25 +15,48 @@ import pathlib
 #Serial start and com management 
 ###############################################################################
 
-try:
-    serialPort = 'COM6' #Will change based on port plugged into
-    baudRate = 9600
-    ser = serial.Serial(serialPort , baudRate, timeout=0, writeTimeout=0) #ensure non-blocking
-    
-except serial.SerialException:
-    print('Port is open')    
+serialPort = 'COM6' #Will change based on port plugged into
+baudRate = 9600
+ser = serial.Serial(serialPort , baudRate, timeout=0, writeTimeout=0) #ensure non-blocking   
 
 def disconnect():
     ser.close()
     root.destroy()
 
-def restartSerial():
+def restartSerial(comPortName):
     global ser
-    log.insert(tk.END, ' \nRestarting comms')
     ser.close()
-    serialPort = 'COM6' #Will change based on port plugged into
+    log.insert(tk.END, '\nRestarting comms at ' + str(comPortName))
+    serialPort = comPortName #Will change based on port plugged into
     baudRate = 9600
-    ser = serial.Serial(serialPort, baudRate, timeout=0, writeTimeout=0) #ensure non-blocking
+    try:
+        ser = serial.Serial(serialPort, baudRate, timeout=0, writeTimeout=0) #ensure non-blocking
+        
+    except serial.SerialException:
+        log.insert(tk.END, '\nThat did not work, you entered the COM port wrong!')
+    root.after(10, readSerial)        
+
+def restartCommsWindow():
+    
+   def restartCommsClose():
+       restartCommsWindow.destroy()
+       
+   def buttonFunctions():
+       global serialPort
+       comPortName = str(comPortEntry.get())
+       root.after(1, lambda: restartSerial(comPortName))
+       restartCommsClose()
+    
+   restartCommsWindow = tk.Toplevel()
+   restartCommsWindow.geometry('550x150')
+   
+   restartWindowLabel1 = tk.Label(restartCommsWindow, text= 'Please enter which COM port (Ex: COM1)',font=("Helvetica",16), height=2,width=34)
+   restartWindowLabel1.pack()
+   comPortEntry = tk.Entry(restartCommsWindow,font=("Helvetica",16))
+   comPortEntry.pack()
+   
+   restartCommsWindowCloseButton = tk.Button(restartCommsWindow, text = 'Ok',height=1,font=("Helvetica",16),width = 25, command = buttonFunctions)
+   restartCommsWindowCloseButton.pack()  
 
 #Recording
 ###############################################################################
@@ -118,7 +141,7 @@ log.config(yscrollcommand=scrollbar.set)
 scrollbar.config(command=log.yview)
 
 #Button to restart serial
-restartButton = tk.Button(root, text="Restart Serial Comms", font=("Helvetica",14), command = restartSerial)
+restartButton = tk.Button(root, text="Restart Serial Comms", font=("Helvetica",14), command = restartCommsWindow)
 restartButton.pack()
 
 #Button to start recording
