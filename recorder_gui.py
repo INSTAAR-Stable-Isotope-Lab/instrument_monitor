@@ -15,9 +15,13 @@ import pathlib
 #Serial start and com management 
 ###############################################################################
 
-serialPort = 'COM6' #Will change based on port plugged into
+serialPort = 'COM11' #Will change based on port plugged into
 baudRate = 9600
-ser = serial.Serial(serialPort , baudRate, timeout=0, writeTimeout=0) #ensure non-blocking   
+
+try:
+    ser = serial.Serial(serialPort, baudRate, timeout=0, writeTimeout=0) #ensure non-blocking
+except serial.SerialException:
+    print("Inital connection failed!")
 
 def disconnect():
     ser.close()
@@ -25,7 +29,10 @@ def disconnect():
 
 def restartSerial(comPortName):
     global ser
-    ser.close()
+    try:
+        ser.close()
+    except:
+        print("Serial close unsuccessful")
     log.insert(tk.END, '\nRestarting comms at ' + str(comPortName))
     serialPort = comPortName #Will change based on port plugged into
     baudRate = 9600

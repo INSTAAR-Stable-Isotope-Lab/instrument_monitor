@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['recorder_gui.py'],
-             pathex=['C:\\Users\\Kevin\\Documents\\School\\instrument_monitor'],
+             pathex=['C:\\Users\\SIL\\Documents\\instrument_monitor'],
              binaries=[],
              datas=[],
              hiddenimports=[],
