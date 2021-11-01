@@ -4,7 +4,7 @@ Created on Mon Dec 14 13:19:02 2020
 
 @author: Kevin Rozmiarek
 """
-# pyinstaller --icon=instaar_temp.ico --noconsole recorder_gui.py
+# pyinstaller --icon=instaar_temp.ico -F --noconsole recorder_gui.py
 
 import serial as serial
 import tkinter as tk
